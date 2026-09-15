@@ -24,6 +24,22 @@ export async function sendTableReadyText(toE164: string, name: string, partySize
   return client.messages.create({
     to: toE164,
     from: fromNumber,
-    body: `Hi ${name}, your table for ${partySize} is ready! Please head to the host stand.`,
+    body: `Hi ${name}, your table for ${partySize} is ready! Reply to let us know you're on your way, and head to the host stand.`,
   });
+}
+
+/**
+ * Confirms an inbound webhook request actually came from Twilio. Skips the
+ * check in development when there's no signature to verify against, so the
+ * endpoint can be curl-tested locally without a real Twilio request; always
+ * enforced in production.
+ */
+export function isValidInboundRequest(
+  signature: string | null,
+  url: string,
+  params: Record<string, string>
+): boolean {
+  if (!signature) return process.env.NODE_ENV !== "production";
+  if (!authToken) return false;
+  return twilio.validateRequest(authToken, signature, url, params);
 }

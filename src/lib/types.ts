@@ -8,4 +8,6 @@ export interface WaitlistEntry {
   status: WaitlistStatus;
   created_at: string;
   notified_at: string | null;
+  confirmed_at: string | null;
+  last_reply: string | null;
 }

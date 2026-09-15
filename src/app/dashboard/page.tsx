@@ -78,10 +78,14 @@ export default function DashboardPage() {
               const waitingRank = waitingIds.indexOf(entry.id) + 1;
               const ripeness = isNotified ? 1 : computeRipeness(waitingRank, waitingIds.length);
 
+              const isConfirmed = Boolean(entry.confirmed_at);
+
               return (
                 <li
                   key={entry.id}
-                  className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border-[2.5px] border-ink bg-paper p-4 shadow-[3px_3px_0_var(--color-ink)]"
+                  className={`flex flex-wrap items-center justify-between gap-4 rounded-2xl border-[2.5px] p-4 shadow-[3px_3px_0_var(--color-ink)] ${
+                    isConfirmed ? "border-green-dark bg-green/10" : "border-ink bg-paper"
+                  }`}
                 >
                   <div className="flex items-center gap-4">
                     <RipeningFruit
@@ -98,8 +102,18 @@ export default function DashboardPage() {
                         </span>
                       </p>
                       <p className="font-body text-sm font-bold text-muted-ink">
-                        {isNotified ? "🍎 Texted, ready" : "Waiting"} · {waitTime(entry.created_at)}
+                        {isNotified
+                          ? entry.confirmed_at
+                            ? "✅ Confirmed"
+                            : "🍎 Texted, waiting to hear back"
+                          : "Waiting"}{" "}
+                        · {waitTime(entry.created_at)}
                       </p>
+                      {entry.last_reply && (
+                        <p className="font-body text-sm text-muted-ink italic">
+                          “{entry.last_reply}”
+                        </p>
+                      )}
                     </div>
                   </div>
 
