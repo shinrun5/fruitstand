@@ -12,7 +12,15 @@ export function normalizeToE164(rawPhone: string): string | null {
   return null;
 }
 
-export async function sendTableReadyText(toE164: string, name: string, partySize: number) {
+export const DEFAULT_NOTIFY_MESSAGE_TEMPLATE =
+  "Hi {name}, your table for {party_size} is ready! Reply to let us know you're on your way, and head to the host stand.";
+
+/** Substitutes {name} and {party_size} placeholders into a message template. */
+export function renderNotifyMessage(template: string, name: string, partySize: number): string {
+  return template.replace(/{name}/g, name).replace(/{party_size}/g, String(partySize));
+}
+
+export async function sendSms(toE164: string, body: string) {
   if (!accountSid || !authToken || !fromNumber) {
     throw new Error(
       "Missing TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, or TWILIO_PHONE_NUMBER environment variables"
@@ -21,11 +29,7 @@ export async function sendTableReadyText(toE164: string, name: string, partySize
 
   const client = twilio(accountSid, authToken);
 
-  return client.messages.create({
-    to: toE164,
-    from: fromNumber,
-    body: `Hi ${name}, your table for ${partySize} is ready! Reply to let us know you're on your way, and head to the host stand.`,
-  });
+  return client.messages.create({ to: toE164, from: fromNumber, body });
 }
 
 /**

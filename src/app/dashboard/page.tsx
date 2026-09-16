@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/Button";
+import { MessageEditor } from "@/components/MessageEditor";
 import { RipeningFruit } from "@/components/RipeningFruit";
 import { fruitForPhone } from "@/lib/fruit";
 import { computeRipeness } from "@/lib/ripeness";
@@ -61,7 +62,9 @@ export default function DashboardPage() {
           <span className="text-3xl">🍓</span>
           <h1 className="font-heading text-3xl font-extrabold text-ink">Fruitstand</h1>
         </div>
-        <p className="mb-6 font-body text-sm font-bold text-muted-ink">Staff dashboard</p>
+        <p className="mb-4 font-body text-sm font-bold text-muted-ink">Staff dashboard</p>
+
+        <MessageEditor />
 
         {error && (
           <p className="mb-4 rounded-2xl border-2 border-coral bg-coral-bg px-4 py-2 font-body font-bold text-coral-dark">

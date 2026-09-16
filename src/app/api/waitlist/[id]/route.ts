@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
-import { sendTableReadyText } from "@/lib/twilio";
+import { getNotifyMessageTemplate } from "@/lib/settings";
+import { renderNotifyMessage, sendSms } from "@/lib/twilio";
 
 type Action = "notify" | "seated" | "cancelled" | "no_show";
 
@@ -28,7 +29,9 @@ export async function PATCH(
 
   if (action === "notify") {
     try {
-      await sendTableReadyText(entry.phone, entry.name, entry.party_size);
+      const template = await getNotifyMessageTemplate();
+      const message = renderNotifyMessage(template, entry.name, entry.party_size);
+      await sendSms(entry.phone, message);
     } catch (err) {
       const message = err instanceof Error ? err.message : "Failed to send text.";
       return NextResponse.json({ error: message }, { status: 502 });
