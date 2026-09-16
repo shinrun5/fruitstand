@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 import { sendTableReadyText } from "@/lib/twilio";
 
-type Action = "notify" | "seated" | "cancelled";
+type Action = "notify" | "seated" | "cancelled" | "no_show";
 
 export async function PATCH(
   request: NextRequest,
@@ -12,7 +12,7 @@ export async function PATCH(
   const body = await request.json();
   const action = body.action as Action;
 
-  if (!["notify", "seated", "cancelled"].includes(action)) {
+  if (!["notify", "seated", "cancelled", "no_show"].includes(action)) {
     return NextResponse.json({ error: "Invalid action." }, { status: 400 });
   }
 

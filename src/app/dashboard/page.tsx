@@ -31,7 +31,7 @@ export default function DashboardPage() {
     return () => clearInterval(interval);
   }, [refresh]);
 
-  async function updateEntry(id: string, action: "notify" | "seated" | "cancelled") {
+  async function updateEntry(id: string, action: "notify" | "seated" | "cancelled" | "no_show") {
     setBusyId(id);
     setError(null);
 
@@ -101,6 +101,11 @@ export default function DashboardPage() {
                           · party of {entry.party_size}
                         </span>
                       </p>
+                      {entry.no_show_count > 0 && (
+                        <p className="font-body text-sm font-bold text-coral-dark">
+                          ⚠️ {entry.no_show_count} previous no-show{entry.no_show_count > 1 ? "s" : ""}
+                        </p>
+                      )}
                       <p className="font-body text-sm font-bold text-muted-ink">
                         {isNotified
                           ? entry.confirmed_at
@@ -136,6 +141,16 @@ export default function DashboardPage() {
                     >
                       Seated
                     </Button>
+                    {isNotified && (
+                      <Button
+                        variant="secondary"
+                        onClick={() => updateEntry(entry.id, "no_show")}
+                        disabled={busyId === entry.id}
+                        className="!px-4 !py-2 !text-sm"
+                      >
+                        No Show
+                      </Button>
+                    )}
                     <Button
                       variant="secondary"
                       onClick={() => updateEntry(entry.id, "cancelled")}
