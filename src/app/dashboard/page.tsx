@@ -104,6 +104,11 @@ export default function DashboardPage() {
                           · party of {entry.party_size}
                         </span>
                       </p>
+                      {entry.visit_count > 0 && (
+                        <p className="font-body text-sm font-bold text-muted-ink">
+                          👋 Visited {entry.visit_count} time{entry.visit_count > 1 ? "s" : ""} before
+                        </p>
+                      )}
                       {entry.no_show_count > 0 && (
                         <p className="font-body text-sm font-bold text-coral-dark">
                           ⚠️ {entry.no_show_count} previous no-show{entry.no_show_count > 1 ? "s" : ""}
@@ -144,16 +149,14 @@ export default function DashboardPage() {
                     >
                       Seated
                     </Button>
-                    {isNotified && (
-                      <Button
-                        variant="secondary"
-                        onClick={() => updateEntry(entry.id, "no_show")}
-                        disabled={busyId === entry.id}
-                        className="!px-4 !py-2 !text-sm"
-                      >
-                        No Show
-                      </Button>
-                    )}
+                    <Button
+                      variant="secondary"
+                      onClick={() => updateEntry(entry.id, "no_show")}
+                      disabled={busyId === entry.id}
+                      className="!px-4 !py-2 !text-sm"
+                    >
+                      No Show
+                    </Button>
                     <Button
                       variant="secondary"
                       onClick={() => updateEntry(entry.id, "cancelled")}

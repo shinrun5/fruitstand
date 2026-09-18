@@ -13,19 +13,24 @@ export async function GET() {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  const { data: noShowRows } = await supabaseAdmin
+  const { data: pastRows } = await supabaseAdmin
     .from("waitlist_entries")
-    .select("phone")
-    .eq("status", "no_show");
+    .select("phone, status")
+    .in("status", ["seated", "no_show", "cancelled"]);
 
   const noShowCounts = new Map<string, number>();
-  for (const row of noShowRows ?? []) {
-    noShowCounts.set(row.phone, (noShowCounts.get(row.phone) ?? 0) + 1);
+  const visitCounts = new Map<string, number>();
+  for (const row of pastRows ?? []) {
+    visitCounts.set(row.phone, (visitCounts.get(row.phone) ?? 0) + 1);
+    if (row.status === "no_show") {
+      noShowCounts.set(row.phone, (noShowCounts.get(row.phone) ?? 0) + 1);
+    }
   }
 
   const entries = data.map((entry) => ({
     ...entry,
     no_show_count: noShowCounts.get(entry.phone) ?? 0,
+    visit_count: visitCounts.get(entry.phone) ?? 0,
   }));
 
   return NextResponse.json({ entries });
